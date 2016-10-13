@@ -1,10 +1,9 @@
-##»úÆ÷Ñ§Ï°»ã×Ü
+æœºå™¨å­¦ä¹ æ±‡æ€»
 
-## KNN
-K×î½üÁÚ£¨k-Nearest Neighbor£¬KNN£©·ÖÀàËã·¨£¬ÓÃÓÚÊý¾Ý·ÖÀà
+KNN
+Kæœ€è¿‘é‚»ï¼ˆk-Nearest Neighborï¼ŒKNNï¼‰åˆ†ç±»ç®—æ³•ï¼Œç”¨äºŽæ•°æ®åˆ†ç±»
 
-## TF-IDF
-TF-IDFËã·¨ÓÃÓÚÎÄÕÂ·Ö´Ê£¬ÎÄÕÂÏàËÆÐÔ¼ì²âµÈ¡£
-
+TF-IDF
+TF-IDFç®—æ³•ç”¨äºŽæ–‡ç« åˆ†è¯ï¼Œæ–‡ç« ç›¸ä¼¼æ€§æ£€æµ‹ç­‰ã€‚
 
 BY nmask  2016
