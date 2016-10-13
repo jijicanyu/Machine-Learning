@@ -4,7 +4,7 @@ import sqlite3
 
 class sql_db:
 	def __init__(self):
-		self.db=sqlite3.connect("./test.db")  ##连接库，若没有则创建
+		self.db=sqlite3.connect("./word_num.db")  ##连接库，若没有则创建
 		self.cur=self.db.cursor()
 	
 	def create_table(self):

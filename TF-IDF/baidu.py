@@ -6,7 +6,6 @@ from sql import sql_db
 
 url_baidu="http://www.baidu.com/s?wd="
 res=r"百度为您找到相关结果约(.*)个"
-# keyword="博彩"
 
 def baidu_search(keyword):
 	try:
@@ -45,7 +44,7 @@ def sql_search(keyword):
 			print "[Save...]{%s:%s}" % (keyword,str(num))
 		except Exception,e:
 			print e
-	cur.close()
+	# cur.close()
 	return num
 
 
