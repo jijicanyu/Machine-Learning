@@ -4,7 +4,8 @@ import sqlite3
 
 class sql_db:
 	def __init__(self):
-		self.db=sqlite3.connect("./word_num.db")  ##连接库，若没有则创建
+		self.db=sqlite3.connect("./bing_search.db")  ##连接必应库，若没有则创建
+		# self.db=sqlite3.connect("./baidu_search.db")  ##连接百度库，若没有则创建
 		self.cur=self.db.cursor()
 	
 	def create_table(self):
@@ -47,8 +48,8 @@ class sql_db:
 
 # if __name__=="__main__":
 # 	cur=sql_db()
-# 	# cur.create_table()
-# 	cur.search_db(table='ci_num')
-# 	# cur.delete_db(table='ci_num')
+# 	cur.create_table()
+	# cur.search_db(table='ci_num')
+	# cur.delete_db(table='ci_num')
 
 

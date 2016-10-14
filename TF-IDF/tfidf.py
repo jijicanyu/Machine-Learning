@@ -5,16 +5,17 @@ import numpy
 import string
 import re
 import sys
-from baidu import sql_search
+from idf_search import sql_search
 from bs4 import BeautifulSoup
+from sql import sql_db
 import urllib2
 
 class tf_idf:
 
-	def __init__(self):
-		self.url="http://www.gjsy.gov.cn/zcfg/flfg/201204/t20120420_354.html"
-		self.string=['，','。'," ","\n","\r","》","《","	","、"," ","：",")","(","（","）","！",'【','】','“','”',"的"]
-		self.num_all=800000000  ##百度语料库总数
+	def __init__(self,url):
+		self.url=url
+		self.string=['•','？','，','。'," ","\n","\r","》","《","	","、"," ","：",")","(","（","）","！",'【','】','“','”',"的"]
+		self.num_all=2000000000  ##百度语料库总数
 		self.dict_ci_num={}   ##关键词在文章中出现的次数{"中国":100}
 		self.dict_ci_tf={}    ##关键词在文章中的词频{"中国":0.012121}
 		self.dict_ci_idf={}   ##关键词在语料库(此处为百度)中的idf值{"中国":0.01213}
@@ -33,8 +34,7 @@ class tf_idf:
 		# 	content=w.read()
 
 		try:
-			content=urllib2.urlopen(self.url).read().lower()
-
+			content=urllib2.urlopen(self.url,timeout=5).read().lower()
 			soup=BeautifulSoup(content,'lxml')                            #去除网页内html标签
 			[script.extract() for script in soup.findAll('script')]    #把html里script，style给清理
 			[style.extract() for style in soup.findAll('style')]
@@ -51,7 +51,8 @@ class tf_idf:
 
 		except Exception,e:
 			print e
-			sys.exit()
+			
+			return
 
 		self.jieba_cut(content)
 
@@ -61,6 +62,7 @@ class tf_idf:
 		list_content=b.split("/")
 		self.list_content_len=len(list_content)
 		for i in list_content:
+			#print i.encode("utf-8")
 			if len(i)<12:                    ##剔除很长的单词
 				num=(list_content.count(i))
 				self.dict_ci_num[i]=num
@@ -75,10 +77,12 @@ class tf_idf:
 
 
 	def get_idf(self):
+		cur=sql_db()
 		for key in self.dict_ci_num.keys():
-			num=sql_search(key.encode("utf-8"))       ##通过百度搜索引擎查询idf
+			num=sql_search(key.encode("utf-8"),cur)       ##通过百度搜索引擎查询idf
 			idf=numpy.log(float(self.num_all)/float((num+1)))
 			self.dict_ci_idf[key]=idf
+		cur.close()
 
 	def get_tf_idf(self):
 		for key in self.dict_ci_tf.keys():
@@ -96,9 +100,17 @@ class tf_idf:
 		else:
 			nums=num
 		for i in range(0,nums):
-			print list_tfidf[i][1],list_tfidf[i][0]
+			try:
+				print list_tfidf[i][1],list_tfidf[i][0]
+			except:
+				pass
 
-tf_idf()
+
+with open("url.txt","r") as w:
+	f=[i.replace("\n","") for i in w.readlines()]
+
+for i in f:
+	tf_idf(i)
 
 
 
