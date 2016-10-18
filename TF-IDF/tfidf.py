@@ -4,11 +4,11 @@ import jieba
 import numpy
 import string
 import re
-import sys
 from idf_search import sql_search
 from bs4 import BeautifulSoup
 from sql import sql_db
 import urllib2
+from langconv import *
 
 class tf_idf:
 
@@ -34,13 +34,14 @@ class tf_idf:
 		# 	content=w.read()
 
 		try:
-			content=urllib2.urlopen(self.url,timeout=5).read().lower()
+			content=urllib2.urlopen(self.url, timeout=5).read().lower()
 			soup=BeautifulSoup(content,'lxml')                            #去除网页内html标签
+			content_title=soup.title.string
 			[script.extract() for script in soup.findAll('script')]    #把html里script，style给清理
 			[style.extract() for style in soup.findAll('style')]
 			reg1 = re.compile("<[^>]*>")                                #把所有的HTML标签全部清理
 			content = reg1.sub('',soup.prettify())                       #格式化输出
-
+			content+=content_title*3
 			for i in string.punctuation:   ##去除字符串标点符号
 				content=content.encode("utf-8").replace(i,'').decode("utf-8")
 
@@ -48,6 +49,7 @@ class tf_idf:
 				content=content.encode("utf-8").replace(str(i),'').decode("utf-8")
 
 			content=re.sub('\w','',content)  ##去除字母跟数字
+			content=Converter('zh-hans').convert(content)
 
 		except Exception,e:
 			print e
@@ -106,8 +108,10 @@ class tf_idf:
 				pass
 
 
-with open("url.txt","r") as w:
-	f=[i.replace("\n","") for i in w.readlines()]
+# with open("url.txt","r") as w:
+# 	f=[i.replace("\n","") for i in w.readlines()]
+
+f=["http://www.macauslot.com"]
 
 for i in f:
 	tf_idf(i)
