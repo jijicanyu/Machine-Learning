@@ -30,10 +30,10 @@ class tf_idf:
 
 	def get_content(self):
 
-		# with open("test.txt","r") as w:
-		# 	content=w.read()
-
 		try:
+			# # with open(self.url,"r") as w:
+			# 	content=w.read().lower()
+
 			content=urllib2.urlopen(self.url, timeout=5).read().lower()
 			soup=BeautifulSoup(content,'lxml')                            #去除网页内html标签
 			try:
@@ -49,6 +49,7 @@ class tf_idf:
 			reg1 = re.compile("<[^>]*>")                                #把所有的HTML标签全部清理
 			content = reg1.sub('',soup.prettify())                       #格式化输出
 			content=content_title*10+content_desc*10+content
+			
 			for i in string.punctuation:   ##去除字符串标点符号
 				content=content.encode("utf-8").replace(i,'').decode("utf-8")
 
@@ -111,8 +112,8 @@ class tf_idf:
 		for i in range(0,nums):
 			try:
 				print list_tfidf[i][1],list_tfidf[i][0]
-				with open("dict_all.txt","a") as w:
-					w.write(list_tfidf[i][0].encode("utf-8")+"\n")
+				# with open("dict_all.txt","a") as w:
+				# 	w.write(list_tfidf[i][0].encode("utf-8")+"\n")
 			except Exception,e:
 				print e
 				pass
@@ -120,10 +121,10 @@ class tf_idf:
 
 with open("url.txt","r") as w:
 	f=[i.replace("\n","") for i in w.readlines()]
-# f=["http://www.sgzjfy.gov.cn/vbnm/20160924587.html"]
 
 for i in f:
 	tf_idf(i)
+	break
 	
 
 
