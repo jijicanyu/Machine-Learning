@@ -36,12 +36,19 @@ class tf_idf:
 		try:
 			content=urllib2.urlopen(self.url, timeout=5).read().lower()
 			soup=BeautifulSoup(content,'lxml')                            #去除网页内html标签
-			content_title=soup.title.string
+			try:
+				content_title=soup.title.string
+			except:
+				content_title=""
+			try:
+				content_desc=soup.select("meta[name=\"description\"]")[0]['content']
+			except:
+				content_desc=""
 			[script.extract() for script in soup.findAll('script')]    #把html里script，style给清理
 			[style.extract() for style in soup.findAll('style')]
 			reg1 = re.compile("<[^>]*>")                                #把所有的HTML标签全部清理
 			content = reg1.sub('',soup.prettify())                       #格式化输出
-			content+=content_title*3
+			content=content_title*10+content_desc*10+content
 			for i in string.punctuation:   ##去除字符串标点符号
 				content=content.encode("utf-8").replace(i,'').decode("utf-8")
 
@@ -65,7 +72,7 @@ class tf_idf:
 		self.list_content_len=len(list_content)
 		for i in list_content:
 			#print i.encode("utf-8")
-			if len(i)<12:                    ##剔除很长的单词
+			if 1<len(i)<12:                    ##剔除很长的单词
 				num=(list_content.count(i))
 				self.dict_ci_num[i]=num
 			else:
@@ -104,17 +111,20 @@ class tf_idf:
 		for i in range(0,nums):
 			try:
 				print list_tfidf[i][1],list_tfidf[i][0]
-			except:
+				with open("dict_all.txt","a") as w:
+					w.write(list_tfidf[i][0].encode("utf-8")+"\n")
+			except Exception,e:
+				print e
 				pass
 
 
-# with open("url.txt","r") as w:
-# 	f=[i.replace("\n","") for i in w.readlines()]
-
-f=["http://www.macauslot.com"]
+with open("url.txt","r") as w:
+	f=[i.replace("\n","") for i in w.readlines()]
+# f=["http://www.sgzjfy.gov.cn/vbnm/20160924587.html"]
 
 for i in f:
 	tf_idf(i)
+	
 
 
 
