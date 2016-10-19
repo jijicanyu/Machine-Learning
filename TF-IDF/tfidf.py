@@ -15,7 +15,7 @@ class tf_idf:
 	def __init__(self,url):
 		self.url=url
 		self.string=['•','？','，','。'," ","\n","\r","》","《","	","、"," ","：",")","(","（","）","！",'【','】','“','”',"的"]
-		self.num_all=2000000000  ##百度语料库总数
+		self.num_all=500000000  ##百度语料库总数
 		self.dict_ci_num={}   ##关键词在文章中出现的次数{"中国":100}
 		self.dict_ci_tf={}    ##关键词在文章中的词频{"中国":0.012121}
 		self.dict_ci_idf={}   ##关键词在语料库(此处为百度)中的idf值{"中国":0.01213}
@@ -124,7 +124,6 @@ with open("url.txt","r") as w:
 
 for i in f:
 	tf_idf(i)
-	break
 	
 
 

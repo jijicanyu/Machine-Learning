@@ -4,7 +4,8 @@ import sqlite3
 
 class sql_db:
 	def __init__(self):
-		self.db=sqlite3.connect("./bing_search.db")  ##连接必应库，若没有则创建
+		# self.db=sqlite3.connect("./bing_search.db")  ##连接必应库，若没有则创建
+		self.db=sqlite3.connect("./sougou_search.db")  ##连接必应库，若没有则创建
 		# self.db=sqlite3.connect("./baidu_search.db")  ##连接百度库，若没有则创建
 		self.cur=self.db.cursor()
 	
