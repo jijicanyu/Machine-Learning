@@ -4,18 +4,17 @@ import jieba
 import numpy
 import string
 import re
-from idf_search import sql_search
+from lib.bing_api import sql_search
 from bs4 import BeautifulSoup
-from sql import sql_db
 import urllib2
-from langconv import *
+from lib.langconv import *
 
 class tf_idf:
 
 	def __init__(self,url):
 		self.url=url
 		self.string=['•','？','，','。'," ","\n","\r","》","《","	","、"," ","：",")","(","（","）","！",'【','】','“','”',"的"]
-		self.num_all=500000000  ##百度语料库总数
+		self.num_all=2000000000  ##百度语料库总数
 		self.dict_ci_num={}   ##关键词在文章中出现的次数{"中国":100}
 		self.dict_ci_tf={}    ##关键词在文章中的词频{"中国":0.012121}
 		self.dict_ci_idf={}   ##关键词在语料库(此处为百度)中的idf值{"中国":0.01213}
@@ -87,12 +86,12 @@ class tf_idf:
 
 
 	def get_idf(self):
-		cur=sql_db()
+		# cur=sql_db()
 		for key in self.dict_ci_num.keys():
-			num=sql_search(key.encode("utf-8"),cur)       ##通过百度搜索引擎查询idf
+			num=sql_search(key.encode("utf-8"))       ##通过百度搜索引擎查询idf
 			idf=numpy.log(float(self.num_all)/float((num+1)))
 			self.dict_ci_idf[key]=idf
-		cur.close()
+		# cur.close()
 
 	def get_tf_idf(self):
 		for key in self.dict_ci_tf.keys():
