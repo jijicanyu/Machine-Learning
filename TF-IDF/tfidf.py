@@ -11,6 +11,8 @@ from lib.langconv import *
 
 class tf_idf:
 
+	res=ur"[\u4E00-\u9FA5]"
+
 	def __init__(self,url):
 		self.url=url
 		self.string=['•','？','，','。'," ","\n","\r","》","《","	","、"," ","：",")","(","（","）","！",'【','】','“','”',"的"]
@@ -28,11 +30,12 @@ class tf_idf:
 		self.list_sort()      ## 按tf_idf大小排序
 
 	def get_content(self):
-
 		try:
 			# # with open(self.url,"r") as w:
 			# 	content=w.read().lower()
-
+			'''
+			网页内容获取
+			'''
 			content=urllib2.urlopen(self.url, timeout=5).read().lower()
 			soup=BeautifulSoup(content,'lxml')                            #去除网页内html标签
 			try:
@@ -47,31 +50,36 @@ class tf_idf:
 			[style.extract() for style in soup.findAll('style')]
 			reg1 = re.compile("<[^>]*>")                                #把所有的HTML标签全部清理
 			content = reg1.sub('',soup.prettify())                       #格式化输出
-			content=content_title*10+content_desc*10+content
 			
-			for i in string.punctuation:   ##去除字符串标点符号
-				content=content.encode("utf-8").replace(i,'').decode("utf-8")
+			'''
+			网页内容处理
+			'''
+			content=content_title*10+content_desc*10+content  ##增加标题与描述的权重
+			
+			content=Converter('zh-hans').convert(content)   ##繁体字转化为简体字
 
-			for i in self.string:  ##去除特殊字符
-				content=content.encode("utf-8").replace(str(i),'').decode("utf-8")
+			p=re.compile(tf_idf.res)                        ##保留除中文字以外的字符
+			L=p.findall(content)
+			content_zw=""
+			for i in L:
+				content_zw=content_zw+i
 
-			content=re.sub('\w','',content)  ##去除字母跟数字
-			content=Converter('zh-hans').convert(content)
-
+			#print content_zw
+			
 		except Exception,e:
 			print e
 			
 			return
 
-		self.jieba_cut(content)
+		self.jieba_cut(content_zw)
 
 	def jieba_cut(self,content):
 		a=jieba.cut(content)
 		b="/".join(a)
 		list_content=b.split("/")
+
 		self.list_content_len=len(list_content)
 		for i in list_content:
-			#print i.encode("utf-8")
 			if 1<len(i)<12:                    ##剔除很长的单词
 				num=(list_content.count(i))
 				self.dict_ci_num[i]=num
@@ -86,12 +94,10 @@ class tf_idf:
 
 
 	def get_idf(self):
-		# cur=sql_db()
 		for key in self.dict_ci_num.keys():
-			num=sql_search(key.encode("utf-8"))       ##通过百度搜索引擎查询idf
+			num=sql_search(key)       ##通过百度搜索引擎查询idf
 			idf=numpy.log(float(self.num_all)/float((num+1)))
 			self.dict_ci_idf[key]=idf
-		# cur.close()
 
 	def get_tf_idf(self):
 		for key in self.dict_ci_tf.keys():
@@ -111,18 +117,17 @@ class tf_idf:
 		for i in range(0,nums):
 			try:
 				print list_tfidf[i][1],list_tfidf[i][0]
-				# with open("dict_all.txt","a") as w:
-				# 	w.write(list_tfidf[i][0].encode("utf-8")+"\n")
 			except Exception,e:
 				print e
 				pass
 
 
-with open("url.txt","r") as w:
+with open("./doc/url.txt","r") as w:
 	f=[i.replace("\n","") for i in w.readlines()]
 
 for i in f:
 	tf_idf(i)
+	break
 	
 
 
